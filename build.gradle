@@ -68,7 +68,7 @@ task buildJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
 task compressjre11forLinux(type: Zip, dependsOn: buildJreForLinux) {
     from "$buildDir/temp/extracted/jre/ballerina-jre11-linux/"
     include '*'
-    archiveName "ballerina-jre11-linux-${artifact_version}.zip"
+    archiveName "ballerina-jre11-linux-${project.version}.zip"
     destinationDirectory = file("$buildDir/jre/")
 }
 
