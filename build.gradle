@@ -77,21 +77,21 @@ task assembleJreForMac(type: Exec, dependsOn: extractJdkForLinux) {
 task buildJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     from "$buildDir/temp/extracted/jre/ballerina-jre-linux/"
     include '*'
-    archiveName "ballerina-jre11-linux-${project.version}.zip"
+    archiveName "ballerina-jre-linux-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
 }
 
 task buildJreForWindows(type: Zip, dependsOn: assembleJreForLinux) {
     from "$buildDir/temp/extracted/jre/ballerina-jre-windows/"
     include '*'
-    archiveName "ballerina-jre11-windows-${project.version}.zip"
+    archiveName "ballerina-jre-windows-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
 }
 
 task buildJreForMac(type: Zip, dependsOn: assembleJreForLinux) {
     from "$buildDir/temp/extracted/jre/ballerina-jre-macOS/"
     include '*'
-    archiveName "ballerina-jre11-macOS-${project.version}.zip"
+    archiveName "ballerina-jre-macOS-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
 }
 

@@ -42,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: distribtuions
-          path: ballerina/build/distributions/*.zip
+          path: build/distributions/*.zip
