@@ -78,39 +78,39 @@ task compressjre11forLinux(type: Zip, dependsOn: buildJreForLinux) {
 //    unzipped file: file("$buildDir/extracted-distributions/${project.name}-${project.version}"), builtBy: createDistribution
 //}
 
-release {
-    failOnPublishNeeded = false
-
-    buildTasks = ["build"]
-    versionPropertyFile = 'gradle.properties'
-    tagTemplate = 'v$version'
-
-    git {
-        requireBranch = "release-$version"
-        pushToRemote = 'origin'
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.name
-            version = project.version
-        }
-    }
-
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/NipunaRanasinghe/ballerina-jre-test")
-            credentials {
-                username = System.getenv("packageUser")
-                password = System.getenv("packagePAT")
-            }
-        }
-    }
-}
+//release {
+//    failOnPublishNeeded = false
+//
+//    buildTasks = ["build"]
+//    versionPropertyFile = 'gradle.properties'
+//    tagTemplate = 'v$version'
+//
+//    git {
+//        requireBranch = "release-$version"
+//        pushToRemote = 'origin'
+//    }
+//}
+//
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            groupId project.group
+//            artifactId project.name
+//            version = project.version
+//        }
+//    }
+//
+//    repositories {
+//        maven {
+//            name = "GitHubPackages"
+//            url = uri("https://maven.pkg.github.com/NipunaRanasinghe/ballerina-jre-test")
+//            credentials {
+//                username = System.getenv("packageUser")
+//                password = System.getenv("packagePAT")
+//            }
+//        }
+//    }
+//}
 
 task deleteTemporaryFiles(type: Delete) {
     delete "$buildDir/temp/"
