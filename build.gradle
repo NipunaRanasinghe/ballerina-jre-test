@@ -142,6 +142,6 @@ task deleteTemporaryFiles(type: Delete) {
     delete "$buildDir/temp/"
 }
 
-deleteTemporaryFiles.dependsOn compressjre11forLinux
-deleteTemporaryFiles.dependsOn compressJre11ForWindows
-deleteTemporaryFiles.dependsOn compressjre11forLinux
+deleteTemporaryFiles.dependsOn buildJreForLinux
+deleteTemporaryFiles.dependsOn buildJreForWindows
+deleteTemporaryFiles.dependsOn buildJreForMac
