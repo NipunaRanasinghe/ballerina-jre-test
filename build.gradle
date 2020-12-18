@@ -30,7 +30,7 @@ task downloadJdkforWindows(type: Download) {
 
 task downloadJdkforMac(type: Download) {
     src 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.8_10.tar.gz'
-    dest new File("$buildDir/temp/downloads/", "jdk11-mac.tar.gz")
+    dest new File("$buildDir/temp/downloads/", "jdk11-macOS.tar.gz")
     overwrite false
     onlyIfModified true
 }
@@ -55,21 +55,47 @@ task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
     from tarTree(downloadJdkforMac.dest)
     into "$buildDir/temp/extracted/"
     rename { String fileName ->
-        fileName.replace(".*", 'jdk11-mac')
+        fileName.replace(".*", 'jdk11-macOS')
     }
 }
 
-task buildJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
+task createJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
     workingDir "$buildDir/temp/extracted/jdk11-linux/jdk-11.0.8+10/bin"
     executable 'jlink'
     args '--add-modules', 'java.base,jdk.jdi', '--output', '../../../jre/ballerina-jre11-linux'
 }
 
-task compressjre11forLinux(type: Zip, dependsOn: buildJreForLinux) {
+task createJreForWindows(type: Exec, dependsOn: extractJdkForLinux) {
+    workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-11.0.8+10/bin"
+    executable 'jlink'
+    args '--add-modules', 'java.base,jdk.jdi', '--output', '../../../jre/ballerina-jre11-linux'
+}
+
+task createJreForMac(type: Exec, dependsOn: extractJdkForLinux) {
+    workingDir "$buildDir/temp/extracted/jdk11-macOS/jdk-11.0.8+10/bin"
+    executable 'jlink'
+    args '--add-modules', 'java.base,jdk.jdi', '--output', '../../../jre/ballerina-jre11-linux'
+}
+
+task buildJreForLinux(type: Zip, dependsOn: createJreForLinux) {
     from "$buildDir/temp/extracted/jre/ballerina-jre11-linux/"
     include '*'
     archiveName "ballerina-jre11-linux-${project.version}.zip"
-    destinationDirectory = file("$buildDir/jre/")
+    destinationDirectory = file("$buildDir/distributions/")
+}
+
+task buildJreForWindows(type: Zip, dependsOn: buildJreForLinux) {
+    from "$buildDir/temp/extracted/jre/ballerina-jre11-windows/"
+    include '*'
+    archiveName "ballerina-jre11-windows-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
+}
+
+task buildJreForMac(type: Zip, dependsOn: buildJreForLinux) {
+    from "$buildDir/temp/extracted/jre/ballerina-jre11-macOS/"
+    include '*'
+    archiveName "ballerina-jre11-macOS-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
 }
 
 //artifacts {
@@ -115,3 +141,7 @@ task compressjre11forLinux(type: Zip, dependsOn: buildJreForLinux) {
 task deleteTemporaryFiles(type: Delete) {
     delete "$buildDir/temp/"
 }
+
+deleteTemporaryFiles.dependsOn compressjre11forLinux
+deleteTemporaryFiles.dependsOn compressJre11ForWindows
+deleteTemporaryFiles.dependsOn compressjre11forLinux

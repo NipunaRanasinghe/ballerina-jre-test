@@ -25,13 +25,13 @@ jobs:
         env:
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew clean buildJreForLinux
+        run: ./gradlew buildJreForLinux
       - name: Build JRE on Windows
         if: matrix.os == 'windows-latest'
         env:
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew clean buildJreForWindows
+        run: ./gradlew buildJreForWindows
       - name: Build JRE on macOS
         if: matrix.os == 'macOS-latest'
         env:
