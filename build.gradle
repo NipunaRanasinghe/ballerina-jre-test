@@ -45,7 +45,7 @@ task extractJdkForLinux(type: Copy, dependsOn: downloadJdkforLinux) {
 }
 
 task extractJdkForWindows(type: Copy, dependsOn: downloadJdkforWindows) {
-    from tarTree(downloadJdkforWindows.dest)
+    from zipTree(downloadJdkforWindows.dest)
     into "$buildDir/temp/extracted/jdk-windows"
     includeEmptyDirs = false
 }
