@@ -4,6 +4,8 @@ plugins {
     id "de.undercouch.download" version "4.1.1"
 }
 
+def jdkModules = ""
+
 task getModuleList {
     // Reads default modules included in AdoptOpenJre 11
     def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre11_modules.json")
@@ -12,87 +14,82 @@ task getModuleList {
     // Reads additional modules required for ballerina runtime.
     def additionalModuleFile = new File("$projectDir/resources/additional_modules.json")
     def additionalModules = new JsonSlurper().parseText(additionalModuleFile.text).modules.join(',')
+    jdkModules = "${defaultModules},${additionalModules}"
 }
 
 task downloadJdkforLinux(type: Download) {
-    src 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.8_10.tar.gz'
-    dest new File("$buildDir/temp/downloads/", "jdk11-linux.tar.gz")
+    src linuxJdkUrl
+    dest new File("$buildDir/temp/downloads/", "jdk-linux.tar.gz")
     overwrite false
     onlyIfModified true
 }
 
 task downloadJdkforWindows(type: Download) {
-    src 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.8_10.tar.gz'
-    dest new File("$buildDir/temp/downloads/", "jdk11-windows.zip")
+    src windowsJdkUrl
+    dest new File("$buildDir/temp/downloads/", "jdk-windows.zip")
     overwrite false
     onlyIfModified true
 }
 
 task downloadJdkforMac(type: Download) {
-    src 'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.8%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.8_10.tar.gz'
-    dest new File("$buildDir/temp/downloads/", "jdk11-macOS.tar.gz")
+    src macJdkUrl
+    dest new File("$buildDir/temp/downloads/", "jdk-macOS.tar.gz")
     overwrite false
     onlyIfModified true
 }
 
 task extractJdkForLinux(type: Copy, dependsOn: downloadJdkforLinux) {
     from tarTree(downloadJdkforLinux.dest)
-    into "$buildDir/temp/extracted/"
-    rename { String fileName ->
-        fileName.replace(".*", 'jdk11-linux')
-    }
+    into "$buildDir/temp/extracted/jdk-linux"
+    includeEmptyDirs = false
 }
 
 task extractJdkForWindows(type: Copy, dependsOn: downloadJdkforWindows) {
     from tarTree(downloadJdkforWindows.dest)
-    into "$buildDir/temp/extracted/"
-    rename { String fileName ->
-        fileName.replace(".*", 'jdk11-windows')
-    }
+    into "$buildDir/temp/extracted/jdk-windows"
+    includeEmptyDirs = false
 }
 
 task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
     from tarTree(downloadJdkforMac.dest)
-    into "$buildDir/temp/extracted/"
-    rename { String fileName ->
-        fileName.replace(".*", 'jdk11-macOS')
-    }
+    into "$buildDir/temp/extracted/jdk-mac"
+    includeEmptyDirs = false
 }
 
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
-    workingDir "$buildDir/temp/extracted/jdk11-linux/jdk-11.0.8+10/bin"
+    workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${jdkVersion}/bin"
     executable 'jlink'
-    args '--add-modules', 'java.base,jdk.jdi', '--output', '../../../jre/ballerina-jre11-linux'
+    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-linux'
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForLinux) {
-    workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-11.0.8+10/bin"
+    workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-${jdkVersion}/bin"
     executable 'jlink'
-    args '--add-modules', 'java.base,jdk.jdi', '--output', '../../../jre/ballerina-jre11-linux'
+    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-windows'
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForLinux) {
-    workingDir "$buildDir/temp/extracted/jdk11-macOS/jdk-11.0.8+10/bin"
+    workingDir "$buildDir/temp/extracted/jdk11-macOS/jdk-${jdkVersion}/bin"
     executable 'jlink'
-    args '--add-modules', 'java.base,jdk.jdi', '--output', '../../../jre/ballerina-jre11-linux'
+    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-mac'
 }
 
 task buildJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
-    from "$buildDir/temp/extracted/jre/ballerina-jre11-linux/"
+    from "$buildDir/temp/extracted/jre/ballerina-jre-linux/"
     include '*'
     archiveName "ballerina-jre11-linux-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
 }
 
 task buildJreForWindows(type: Zip, dependsOn: assembleJreForLinux) {
-    from "$buildDir/temp/extracted/jre/ballerina-jre11-windows/"
+    from "$buildDir/temp/extracted/jre/ballerina-jre-windows/"
     include '*'
     archiveName "ballerina-jre11-windows-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
 }
 
 task buildJreForMac(type: Zip, dependsOn: assembleJreForLinux) {
-    from "$buildDir/temp/extracted/jre/ballerina-jre11-macOS/"
+    from "$buildDir/temp/extracted/jre/ballerina-jre-macOS/"
     include '*'
     archiveName "ballerina-jre11-macOS-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
