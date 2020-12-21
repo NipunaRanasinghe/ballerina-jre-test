@@ -38,17 +38,20 @@ jobs:
           packageUser: ${{ github.actor }}
           packagePAT: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew buildJreForMac
-      - name: Archive Artifacts
+      - name: Archive Linux Artifacts
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2
         with:
           name: Linux Artifacts
           path: build/distributions/ballerina-jre-linux-*.zip
-      - name: Archive Artifacts
+      - name: Archive Windows Artifacts
+        if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v2
         with:
           name: Windows Artifacts
           path: build/distributions/ballerina-jre-windows-*.zip
-      - name: Archive Artifacts
+      - name: Archive MacOS Artifacts
+        if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
         with:
           name: MacOS Artifacts
