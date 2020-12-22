@@ -88,29 +88,26 @@ task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
 }
 
 task buildJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
-    archiveFileName = "ballerina-jre-linux-${project.version}.zip"
-    entryCompression = ZipEntryCompression.STORED
-
     from "$buildDir/temp/extracted/jre/ballerina-jre-linux/"
     include '*'
+    archiveName "ballerina-jre-linux-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
 }
 
 task buildJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
-    archiveFileName = "ballerina-jre-windows-${project.version}.zip"
-    entryCompression = ZipEntryCompression.STORED
-
     from "$buildDir/temp/extracted/jre/ballerina-jre-windows/"
     include '*'
+    archiveName "ballerina-jre-windows-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreWindowsZip
 }
 
 task buildJreForMac(type: Zip, dependsOn: assembleJreForMac) {
-    archiveFileName = "ballerina-jre-macOS-${project.version}.zip"
-    entryCompression = ZipEntryCompression.STORED
-
     from "$buildDir/temp/extracted/jre/ballerina-jre-macOS/"
     include '*'
+    archiveName "ballerina-jre-macOS-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreMacOSZip
 }
 
