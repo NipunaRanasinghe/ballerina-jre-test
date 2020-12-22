@@ -5,7 +5,6 @@ on:
 
 jobs:
   publish-release:
-    if: github.repository_owner == 'ballerina-platform'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
