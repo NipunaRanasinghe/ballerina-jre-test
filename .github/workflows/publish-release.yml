@@ -28,7 +28,7 @@ jobs:
           git config user.email nipunaranasinghe93@gmail.com
           git checkout -b release-${VERSION}
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: git update-index --chmod=+x gradlew
       - name: Publish linux artifacts
         if: matrix.os == 'ubuntu-latest'
         env:
