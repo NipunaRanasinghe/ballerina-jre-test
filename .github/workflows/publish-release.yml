@@ -25,27 +25,27 @@ jobs:
       - name: Publish linux artifacts
         if: matrix.os == 'ubuntu-latest'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          packageUser: ${{ secrets.GITHUB_USERNAME }}
-          packagePAT: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.USERNAME }}
+          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
           ./gradlew -Pversion=${VERSION} publish -x test
       - name: Publish windows artifacts
         if: matrix.os == 'windows-latest'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          packageUser: ${{ secrets.GITHUB_USERNAME }}
-          packagePAT: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.USERNAME }}
+          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
         run: |
           ./gradlew.bat release -Prelease.useAutomaticVersion=true
           ./gradlew.bat -Pversion=${VERSION} publish -x test
       - name: Publish macOS artifacts
         if: matrix.os == 'macOS-latest'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          packageUser: ${{ secrets.GITHUB_USERNAME }}
-          packagePAT: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.USERNAME }}
+          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
           ./gradlew -Pversion=${VERSION} publish -x test
@@ -53,7 +53,7 @@ jobs:
         run: |
           curl --request POST 'https://api.github.com/repos/NipunaRanasinghe/ballerina-jre-test/releases' \
           --header 'Accept: application/vnd.github.v3+json' \
-          --header 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'Authorization: Bearer ${{ secrets.JRE_ARTIFACTS_TOKEN }}' \
           --header 'Content-Type: application/json' \
           --data-raw '{
           "tag_name": "v'"$VERSION"'",
