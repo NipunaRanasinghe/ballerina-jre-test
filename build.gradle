@@ -70,6 +70,17 @@ task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
     workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/bin"
     commandLine 'jlink', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-linux'
+
+    doLast {
+        print("Showing Logs...")
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            workingDir "$buildDir/"
+            commandLine 'ls'
+            standardOutput = stdout
+        }
+        println "Output:\n$stdout";
+    }
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
@@ -92,7 +103,7 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
         print("Showing Logs...")
         def stdout = new ByteArrayOutputStream()
         exec {
-            workingDir "$buildDir/distributions/"
+            workingDir "$buildDir/"
             commandLine 'ls'
             standardOutput = stdout
         }
