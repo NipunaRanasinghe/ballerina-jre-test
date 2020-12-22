@@ -70,19 +70,19 @@ task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
     workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/bin"
     executable 'jlink'
-    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-linux'
+    args '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-linux'
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
     workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-${project.jdkVersion}/bin"
     executable 'jlink.bat'
-    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-windows'
+    args '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-windows'
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
     workingDir "$buildDir/temp/extracted/jdk11-macOS/jdk-${project.jdkVersion}/bin"
     executable 'jlink'
-    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-mac'
+    args '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-mac'
 }
 
 task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
@@ -168,14 +168,21 @@ publishing {
     }
 }
 
+
+task deleteGenertedFiles(type: Delete) {
+    delete "$buildDir/temp/extracted/generated/"
+}
+
 task deleteTemporaryFiles(type: Delete) {
-    delete "$buildDir/temp/extracted"
+    delete "$buildDir/temp/"
 }
 
 assembleJreForLinux.dependsOn getModuleList
 assembleJreForWindows.dependsOn getModuleList
 assembleJreForMac.dependsOn getModuleList
 
-deleteTemporaryFiles.mustRunAfter packageJreForLinux
-deleteTemporaryFiles.mustRunAfter packageJreForWindows
-deleteTemporaryFiles.mustRunAfter packageJreForMac
+assembleJreForLinux.dependsOn deleteGenertedFiles
+assembleJreForWindows.dependsOn deleteGenertedFiles
+assembleJreForMac.dependsOn deleteGenertedFiles
+
+deleteTemporaryFiles.dependsOn build
