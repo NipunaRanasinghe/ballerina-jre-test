@@ -158,6 +158,7 @@ release {
     git {
         requireBranch = "release-${moduleVersion}"
         pushToRemote = 'origin'
+        pushOptions = ['--force']
     }
 }
 
