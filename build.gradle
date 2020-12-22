@@ -156,7 +156,7 @@ release {
     tagCommitMessage = "Tag release "
 
     git {
-        requireBranch = "release-${moduleVersion}"
+        requireBranch = ""
         pushToRemote = 'origin'
         pushOptions = ['--force']
     }
