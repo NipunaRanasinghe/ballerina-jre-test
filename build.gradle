@@ -63,7 +63,7 @@ task extractJdkForWindows(type: Copy, dependsOn: downloadJdkforWindows) {
 
 task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
     from tarTree(downloadJdkforMac.dest)
-    into "$buildDir/temp/extracted/jdk-mac"
+    into "$buildDir/temp/extracted/jdk-macOS"
     includeEmptyDirs = false
 }
 
