@@ -184,14 +184,17 @@ assembleJreForWindows.dependsOn deleteGenertedFiles
 assembleJreForMac.dependsOn deleteGenertedFiles
 
 task showGenerated() {
-    print("Showing Logs...")
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        workingDir "$buildDir/distributions/"
-        commandLine 'ls'
-        standardOutput = stdout
+    doLast {
+        print("Showing Logs...")
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            workingDir "$buildDir/distributions/"
+            commandLine 'ls'
+            standardOutput = stdout
+        }
+        println "Output:\n$stdout";
     }
-    println "Output:\n$stdout";
 }
 
+build.dependsOn showGenerated
 showGenerated.mustRunAfter packageJreForLinux
