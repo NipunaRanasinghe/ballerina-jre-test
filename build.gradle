@@ -74,7 +74,7 @@ task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
     workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-${project.jdkVersion}/bin"
-    commandLine 'jlink.exe', '/c', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-windows'
+    commandLine 'cmd', "/c", 'jlink.exe', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-windows'
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
