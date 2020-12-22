@@ -87,7 +87,9 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     archiveName "ballerina-jre-linux-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
+}
 
+task showGenerated(dependsOn: packageJreForLinux) {
     print("Showing Logs...")
     def stdout = new ByteArrayOutputStream()
     exec {
