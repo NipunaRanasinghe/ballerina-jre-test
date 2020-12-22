@@ -87,6 +87,17 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     archiveName "ballerina-jre-linux-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
+
+    doLast {
+        print("Showing Logs...")
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            workingDir "$buildDir/distributions/"
+            commandLine 'ls'
+            standardOutput = stdout
+        }
+        println "Output:\n$stdout";
+    }
 }
 
 task packageJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
