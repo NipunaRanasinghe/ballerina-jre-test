@@ -70,17 +70,6 @@ task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
     workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/bin"
     commandLine 'jlink', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-linux'
-
-    doLast {
-        print("Showing Logs...")
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            workingDir "$buildDir/temp/"
-            commandLine 'ls'
-            standardOutput = stdout
-        }
-        println "Output:\n$stdout";
-    }
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
@@ -94,32 +83,21 @@ task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
 }
 
 task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
-    from fileTree("$buildDir/temp/extracted/jre/ballerina-jre-linux/")
+    from fileTree("$buildDir/temp/generated/ballerina-jre-linux/")
     archiveName "ballerina-jre-linux-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
-
-    doLast {
-        print("Showing Logs...")
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            workingDir "$buildDir/temp/"
-            commandLine 'ls'
-            standardOutput = stdout
-        }
-        println "Output:\n$stdout";
-    }
 }
 
 task packageJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
-    from fileTree("$buildDir/temp/extracted/jre/ballerina-jre-windows/")
+    from fileTree("$buildDir/temp/generated/ballerina-jre-windows/")
     archiveName "ballerina-jre-windows-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreWindowsZip
 }
 
 task packageJreForMac(type: Zip, dependsOn: assembleJreForMac) {
-    from fileTree("$buildDir/temp/extracted/jre/ballerina-jre-macOS/")
+    from fileTree("$buildDir/temp/generated/ballerina-jre-macOS/")
     archiveName "ballerina-jre-macOS-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreMacOSZip
