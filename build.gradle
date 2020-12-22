@@ -170,7 +170,7 @@ publishing {
 
 
 task deleteGenertedFiles(type: Delete) {
-    delete "$buildDir/temp/extracted/generated/"
+    delete "$buildDir/temp/generated/"
 }
 
 task deleteTemporaryFiles(type: Delete) {
