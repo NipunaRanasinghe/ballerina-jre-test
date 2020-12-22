@@ -134,6 +134,7 @@ release {
     failOnPublishNeeded = false
     failOnUpdateNeeded = false
     failOnUnversionedFiles = false
+    failOnCommitNeeded = false
     buildTasks = ['build']
     versionPropertyFile = 'gradle.properties'
     tagTemplate = 'v$version'
@@ -142,7 +143,7 @@ release {
     tagCommitMessage = "Tag release "
 
     git {
-        requireBranch = "release-${moduleVersion}"
+        requireBranch = ""
         pushToRemote = 'origin'
     }
 }
