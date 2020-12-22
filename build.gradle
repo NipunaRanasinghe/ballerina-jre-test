@@ -75,7 +75,7 @@ task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
         print("Showing Logs...")
         def stdout = new ByteArrayOutputStream()
         exec {
-            workingDir "$buildDir/"
+            workingDir "$buildDir/temp/"
             commandLine 'ls'
             standardOutput = stdout
         }
@@ -103,7 +103,7 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
         print("Showing Logs...")
         def stdout = new ByteArrayOutputStream()
         exec {
-            workingDir "$buildDir/"
+            workingDir "$buildDir/temp/"
             commandLine 'ls'
             standardOutput = stdout
         }
