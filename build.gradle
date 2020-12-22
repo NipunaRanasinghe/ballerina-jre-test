@@ -69,20 +69,17 @@ task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
 
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
     workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/bin"
-    executable 'jlink'
-    args '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-linux'
+    commandLine 'jlink', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-linux'
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
     workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-${project.jdkVersion}/bin"
-    executable 'jlink.bat'
-    args '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-windows'
+    commandLine 'cmd', '/c', 'jlink.bat', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-windows'
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
     workingDir "$buildDir/temp/extracted/jdk11-macOS/jdk-${project.jdkVersion}/bin"
-    executable 'jlink'
-    args '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-mac'
+    commandLine 'jlink', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-mac'
 }
 
 task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
@@ -90,7 +87,13 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     archiveName "ballerina-jre-linux-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
-    print("Created at: $buildDir/distributions/")
+
+    doLast {
+        exec {
+            workingDir "$buildDir/distributions/"
+            commandLine 'ls'
+        }
+    }
 }
 
 task packageJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
