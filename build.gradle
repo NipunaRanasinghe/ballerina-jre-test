@@ -176,4 +176,6 @@ assembleJreForLinux.dependsOn getModuleList
 assembleJreForWindows.dependsOn getModuleList
 assembleJreForMac.dependsOn getModuleList
 
-deleteTemporaryFiles.mustRunAfter build
+deleteTemporaryFiles.mustRunAfter packageJreForLinux
+deleteTemporaryFiles.mustRunAfter packageJreForWindows
+deleteTemporaryFiles.mustRunAfter packageJreForMac
