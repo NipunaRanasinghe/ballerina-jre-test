@@ -6,6 +6,8 @@ plugins {
     id "net.researchgate.release" version "2.8.0"
 }
 
+def jdkModules = ""
+
 task getModuleList {
     // Reads default modules included in AdoptOpenJre 11
     def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre11_modules.json")
@@ -14,25 +16,25 @@ task getModuleList {
     // Reads additional modules required for ballerina runtime.
     def additionalModuleFile = new File("$projectDir/resources/additional_modules.json")
     def additionalModules = new JsonSlurper().parseText(additionalModuleFile.text).modules.join(',')
-    ext.jdkModules = "${defaultModules},${additionalModules}"
+    jdkModules = "${defaultModules},${additionalModules}"
 }
 
 task downloadJdkforLinux(type: Download) {
-    src linuxJdkUrl
+    src project.linuxJdkUrl
     dest new File("$buildDir/temp/downloads/", "jdk-linux.tar.gz")
     overwrite false
     onlyIfModified true
 }
 
 task downloadJdkforWindows(type: Download) {
-    src windowsJdkUrl
+    src project.windowsJdkUrl
     dest new File("$buildDir/temp/downloads/", "jdk-windows.zip")
     overwrite false
     onlyIfModified true
 }
 
 task downloadJdkforMac(type: Download) {
-    src macJdkUrl
+    src project.macJdkUrl
     dest new File("$buildDir/temp/downloads/", "jdk-macOS.tar.gz")
     overwrite false
     onlyIfModified true
@@ -57,21 +59,21 @@ task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
 }
 
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
-    workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${jdkVersion}/bin"
+    workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/bin"
     executable 'jlink'
-    args '--add-modules', ext.jdkModules, '--output', '../../../jre/ballerina-jre-linux'
+    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-linux'
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
-    workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-${jdkVersion}/bin"
+    workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-${project.jdkVersion}/bin"
     executable 'jlink'
-    args '--add-modules', ext.jdkModules, '--output', '../../../jre/ballerina-jre-windows'
+    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-windows'
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
-    workingDir "$buildDir/temp/extracted/jdk11-macOS/jdk-${jdkVersion}/bin"
+    workingDir "$buildDir/temp/extracted/jdk11-macOS/jdk-${project.jdkVersion}/bin"
     executable 'jlink'
-    args '--add-modules', ext.jdkModules, '--output', '../../../jre/ballerina-jre-mac'
+    args '--add-modules', jdkModules, '--output', '../../../jre/ballerina-jre-mac'
 }
 
 task buildJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
@@ -95,16 +97,6 @@ task buildJreForMac(type: Zip, dependsOn: assembleJreForMac) {
     destinationDirectory = file("$buildDir/distributions/")
 }
 
-task build {
-    if (Os.isFamily(Os.FAMILY_UNIX)) {
-        dependsOn buildJreForLinux
-    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        dependsOn buildJreForWindows
-    } else if (Os.isFamily(Os.FAMILY_MAC)) {
-        dependsOn buildJreForMac
-    }
-}
-
 def moduleVersion = project.version
 if (moduleVersion.indexOf('-') != -1) {
     moduleVersion = moduleVersion.substring(0, moduleVersion.indexOf('-'))
@@ -123,10 +115,22 @@ release {
     }
 }
 
+task build {
+    if (Os.isFamily(Os.FAMILY_UNIX)) {
+        dependsOn buildJreForLinux
+    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        dependsOn buildJreForWindows
+    } else if (Os.isFamily(Os.FAMILY_MAC)) {
+        dependsOn buildJreForMac
+    }
+}
+
 task deleteTemporaryFiles(type: Delete) {
     delete "$buildDir/temp/"
 }
 
-deleteTemporaryFiles.dependsOn buildJreForLinux
-deleteTemporaryFiles.dependsOn buildJreForWindows
-deleteTemporaryFiles.dependsOn buildJreForMac
+assembleJreForLinux.dependsOn getModuleList
+assembleJreForWindows.dependsOn getModuleList
+assembleJreForMac.dependsOn getModuleList
+
+deleteTemporaryFiles.dependsOn build
