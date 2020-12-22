@@ -74,7 +74,7 @@ task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
     workingDir "$buildDir/temp/extracted/jdk11-windows/jdk-${project.jdkVersion}/bin"
-    commandLine 'cmd', '/c', 'jlink.bat', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-windows'
+    commandLine 'cmd.exe', '/c', 'jlink.bat', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-windows'
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
@@ -88,8 +88,8 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
 
+    print("Showing Logs...")
     doLast {
-        print("build dir")
         new ByteArrayOutputStream().withStream { os ->
             def result = exec {
                 workingDir "$buildDir/distributions/"
