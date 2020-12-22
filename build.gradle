@@ -147,10 +147,13 @@ publishing {
 
 release {
     failOnPublishNeeded = false
-
+    failOnUpdateNeeded = false
     buildTasks = ['build']
     versionPropertyFile = 'gradle.properties'
     tagTemplate = 'v$version'
+    newVersionCommitMessage = "Update to next development version "
+    preTagCommitMessage = "Prepare release version "
+    tagCommitMessage = "Tag release "
 
     git {
         requireBranch = "release-${moduleVersion}"
