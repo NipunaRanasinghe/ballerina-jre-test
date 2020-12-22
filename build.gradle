@@ -89,9 +89,19 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     outputs.file ballerinaJreLinuxZip
 
     doLast {
+        print("build dir")
         new ByteArrayOutputStream().withStream { os ->
             def result = exec {
                 workingDir "$buildDir/distributions/"
+                commandLine 'ls'
+                standardOutput = os
+            }
+            print(os.toString())
+        }
+
+        new ByteArrayOutputStream().withStream { os ->
+            def result = exec {
+                workingDir "$buildDir/"
                 commandLine 'ls'
                 standardOutput = os
             }
