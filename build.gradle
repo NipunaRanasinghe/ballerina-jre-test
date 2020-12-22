@@ -89,17 +89,6 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     outputs.file ballerinaJreLinuxZip
 }
 
-task showGenerated(dependsOn: packageJreForLinux) {
-    print("Showing Logs...")
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        workingDir "$buildDir/distributions/"
-        commandLine 'ls'
-        standardOutput = stdout
-    }
-    println "Output:\n$stdout";
-}
-
 task packageJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
     from fileTree("$buildDir/temp/extracted/jre/ballerina-jre-windows/")
     archiveName "ballerina-jre-windows-${project.version}.zip"
@@ -178,7 +167,6 @@ publishing {
     }
 }
 
-
 task deleteGenertedFiles(type: Delete) {
     delete "$buildDir/temp/generated/"
 }
@@ -194,3 +182,16 @@ assembleJreForMac.dependsOn getModuleList
 assembleJreForLinux.dependsOn deleteGenertedFiles
 assembleJreForWindows.dependsOn deleteGenertedFiles
 assembleJreForMac.dependsOn deleteGenertedFiles
+
+task showGenerated() {
+    print("Showing Logs...")
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        workingDir "$buildDir/distributions/"
+        commandLine 'ls'
+        standardOutput = stdout
+    }
+    println "Output:\n$stdout";
+}
+
+showGenerated.mustRunAfter packageJreForLinux
