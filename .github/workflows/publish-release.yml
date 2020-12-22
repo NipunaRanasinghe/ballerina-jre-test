@@ -62,5 +62,35 @@ jobs:
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_name: ballerina-jre-${{ matrix.os }}-${VERSION}.zip
-          asset_path: build/build/distributions/ballerina-${{ matrix.os }}-${VERSION}.zip
+          asset_path: build/build/distributions/ballerina-${{ matrix.os }}-$VERSION.zip
+          asset_content_type: application/octet-stream
+      - name: Upload linux release assets
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_name: ballerina-jre-linux-${VERSION}.zip
+          asset_path: build/build/distributions/ballerina-jre-linux-${VERSION}.zip
+          asset_content_type: application/octet-stream
+      - name: Upload windows release assets
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_name: ballerina-jre-windows-${VERSION}.zip
+          asset_path: build/build/distributions/ballerina-jre-windows-${VERSION}.zip
+          asset_content_type: application/octet-stream
+      - name: Upload macOS release assets
+        if: matrix.os == 'macOS-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_name: ballerina-jre-macOS-${VERSION}.zip
+          asset_path: build/build/distributions/ballerina-jre-macOS-${VERSION}.zip
           asset_content_type: application/octet-stream
