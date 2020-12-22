@@ -37,7 +37,7 @@ jobs:
           packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
-          ./gradlew -Pversion=${VERSION} publish -x test
+          ./gradlew -Pversion=${VERSION} publish
       - name: Publish windows artifacts
         if: matrix.os == 'windows-latest'
         env:
@@ -46,7 +46,7 @@ jobs:
           packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
         run: |
           ./gradlew.bat release -Prelease.useAutomaticVersion=true
-          ./gradlew.bat -Pversion=${VERSION} publish -x test
+          ./gradlew.bat -Pversion=${VERSION} publish
       - name: Publish macOS artifacts
         if: matrix.os == 'macOS-latest'
         env:
@@ -55,7 +55,7 @@ jobs:
           packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
         run: |
           ./gradlew release -Prelease.useAutomaticVersion=true
-          ./gradlew -Pversion=${VERSION} publish -x test
+          ./gradlew -Pversion=${VERSION} publish
       - name: Create Github release from the release tag
         run: |
           curl --request POST 'https://api.github.com/repos/NipunaRanasinghe/ballerina-jre-test/releases' \
