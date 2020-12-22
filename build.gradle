@@ -90,6 +90,7 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     archiveName "ballerina-jre-linux-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
+    print("Created at: $buildDir/distributions/")
 }
 
 task packageJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
@@ -186,5 +187,3 @@ assembleJreForMac.dependsOn getModuleList
 assembleJreForLinux.dependsOn deleteGenertedFiles
 assembleJreForWindows.dependsOn deleteGenertedFiles
 assembleJreForMac.dependsOn deleteGenertedFiles
-
-deleteTemporaryFiles.dependsOn build
