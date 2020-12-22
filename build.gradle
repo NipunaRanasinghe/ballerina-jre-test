@@ -143,7 +143,7 @@ release {
     tagCommitMessage = "Tag release "
 
     git {
-        requireBranch = ""
+        requireBranch = "release-${moduleVersion}"
         pushToRemote = 'origin'
     }
 }
@@ -162,9 +162,13 @@ publishing {
 
     publications {
         mavenJava(MavenPublication) {
-            artifact source: packageJreForLinux, extension: 'zip'
-            artifact source: packageJreForWindows, extension: 'zip'
-            artifact source: packageJreForMac, extension: 'zip'
+            if (Os.isFamily(Os.FAMILY_UNIX)) {
+                artifact source: packageJreForLinux, extension: 'zip'
+            } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                artifact source: packageJreForWindows, extension: 'zip'
+            } else if (Os.isFamily(Os.FAMILY_MAC)) {
+                artifact source: packageJreForMac, extension: 'zip'
+            }
         }
     }
 }
