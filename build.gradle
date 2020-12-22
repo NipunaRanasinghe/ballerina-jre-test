@@ -4,9 +4,20 @@ import org.apache.tools.ant.taskdefs.condition.Os
 plugins {
     id "de.undercouch.download" version "4.1.1"
     id "net.researchgate.release" version "2.8.0"
+    id "maven-publish"
 }
 
 def jdkModules = ""
+
+configurations {
+    ballerinaLinuxDistribution
+    ballerinaWindowsDistribution
+    ballerinaMacDistribution
+}
+
+def ballerinaJreLinuxZip = file("$project.buildDir/distributions/ballerina-jre-linux-${project.version}.zip")
+def ballerinaJreWindowsZip = file("$project.buildDir/distributions/ballerina-jre-windows-${project.version}.zip")
+def ballerinaJreMacOSZip = file("$project.buildDir/distributions/ballerina-jre-macos-${project.version}.zip")
 
 task getModuleList {
     // Reads default modules included in AdoptOpenJre 11
@@ -80,26 +91,55 @@ task buildJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     from "$buildDir/temp/extracted/jre/ballerina-jre-linux/"
     include '*'
     archiveName "ballerina-jre-linux-${project.version}.zip"
-    destinationDirectory = file("$buildDir/distributions/")
+    outputs.file ballerinaJreLinuxZip
 }
 
 task buildJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
     from "$buildDir/temp/extracted/jre/ballerina-jre-windows/"
     include '*'
     archiveName "ballerina-jre-windows-${project.version}.zip"
-    destinationDirectory = file("$buildDir/distributions/")
+    outputs.file ballerinaJreWindowsZip
 }
 
 task buildJreForMac(type: Zip, dependsOn: assembleJreForMac) {
     from "$buildDir/temp/extracted/jre/ballerina-jre-macOS/"
     include '*'
     archiveName "ballerina-jre-macOS-${project.version}.zip"
-    destinationDirectory = file("$buildDir/distributions/")
+    outputs.file ballerinaJreMacOSZip
 }
 
 def moduleVersion = project.version
 if (moduleVersion.indexOf('-') != -1) {
     moduleVersion = moduleVersion.substring(0, moduleVersion.indexOf('-'))
+}
+
+task build {
+    if (Os.isFamily(Os.FAMILY_UNIX)) {
+        dependsOn buildJreForLinux
+    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        dependsOn buildJreForWindows
+    } else if (Os.isFamily(Os.FAMILY_MAC)) {
+        dependsOn buildJreForMac
+    }
+}
+
+artifacts {
+    ballerinaLinuxDistribution file: ballerinaJreLinuxZip, builtBy: buildJreForLinux
+    ballerinaWindowsDistribution file: ballerinaJreWindowsZip, builtBy: buildJreForWindows
+    ballerinaMacDistribution file: ballerinaJreMacOSZip, builtBy: buildJreForMac
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/NipunaRanasinghe/ballerina-jre-test")
+            credentials {
+                username = System.getenv("packageUser")
+                password = System.getenv("packagePAT")
+            }
+        }
+    }
 }
 
 release {
@@ -112,16 +152,6 @@ release {
     git {
         requireBranch = "release-${moduleVersion}"
         pushToRemote = 'origin'
-    }
-}
-
-task build {
-    if (Os.isFamily(Os.FAMILY_UNIX)) {
-        dependsOn buildJreForLinux
-    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        dependsOn buildJreForWindows
-    } else if (Os.isFamily(Os.FAMILY_MAC)) {
-        dependsOn buildJreForMac
     }
 }
 
