@@ -10,9 +10,7 @@ plugins {
 def jdkModules = ""
 
 configurations {
-    ballerinaLinuxDistribution
-    ballerinaWindowsDistribution
-    ballerinaMacDistribution
+    zip
 }
 
 def ballerinaJreLinuxZip = file("$project.buildDir/distributions/ballerina-jre-linux-${project.version}.zip")
