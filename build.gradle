@@ -182,19 +182,3 @@ assembleJreForMac.dependsOn getModuleList
 assembleJreForLinux.dependsOn deleteGenertedFiles
 assembleJreForWindows.dependsOn deleteGenertedFiles
 assembleJreForMac.dependsOn deleteGenertedFiles
-
-task showGenerated() {
-    doLast {
-        print("Showing Logs...")
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            workingDir "$buildDir/distributions/"
-            commandLine 'ls'
-            standardOutput = stdout
-        }
-        println "Output:\n$stdout";
-    }
-}
-
-build.dependsOn showGenerated
-showGenerated.mustRunAfter packageJreForLinux
