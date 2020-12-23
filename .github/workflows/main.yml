@@ -49,17 +49,20 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: ballerina-jre-linux-${VERSION}.zip
+          # Todo - Include version once job-level environment variable support is fixed.
+          name: ballerina-jre-linux.zip
           path: build/distributions/ballerina-jre-linux-*.zip
       - name: Archive Windows Artifacts
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: ballerina-jre-windows-${VERSION}.zip
+          # Todo - Include version once job-level environment variable support is fixed.
+          name: ballerina-jre-windows.zip
           path: build/distributions/ballerina-jre-windows-*.zip
       - name: Archive MacOS Artifacts
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: ballerina-jre-macos-${VERSION}.zip
+          # Todo - Include version once job-level environment variable support is fixed.
+          name: ballerina-jre-macos.zip
           path: build/distributions/ballerina-jre-macos-*.zip
