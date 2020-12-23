@@ -142,31 +142,6 @@ release {
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/NipunaRanasinghe/ballerina-jre-test")
-            credentials {
-                username = System.getenv("packageUser")
-                password = System.getenv("packagePAT")
-            }
-        }
-    }
-
-    publications {
-        mavenJava(MavenPublication) {
-            if (Os.isFamily(Os.FAMILY_MAC)) {
-                artifact source: packageJreForMac, extension: 'zip'
-            } else if (Os.isFamily(Os.FAMILY_UNIX)) {
-                artifact source: packageJreForLinux, extension: 'zip'
-            } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                artifact source: packageJreForWindows, extension: 'zip'
-            }
-        }
-    }
-}
-
 task deleteGenertedFiles(type: Delete) {
     delete "$buildDir/temp/generated/"
 }
