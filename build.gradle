@@ -18,14 +18,16 @@ def ballerinaJreWindowsZip = file("$buildDir/distributions/ballerina-jre-windows
 def ballerinaJreMacOSZip = file("$buildDir/distributions/ballerina-jre-macos-${project.version}.zip")
 
 task getModuleList {
-    // Reads default modules included in AdoptOpenJre 11
-    def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre11_modules.json")
-    def defaultModules = new JsonSlurper().parseText(defaultModuleFile.text).modules.join(',')
+    doLast {
+        // Reads default modules included in AdoptOpenJre 11
+        def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre11_modules.json")
+        def defaultModules = new JsonSlurper().parseText(defaultModuleFile.text).modules.join(',')
 
-    // Reads additional modules required for ballerina runtime.
-    def additionalModuleFile = new File("$projectDir/resources/additional_modules.json")
-    def additionalModules = new JsonSlurper().parseText(additionalModuleFile.text).modules.join(',')
-    jdkModules = "${defaultModules},${additionalModules}"
+        // Reads additional modules required for ballerina runtime.
+        def additionalModuleFile = new File("$projectDir/resources/additional_modules.json")
+        def additionalModules = new JsonSlurper().parseText(additionalModuleFile.text).modules.join(',')
+        jdkModules = "${defaultModules},${additionalModules}"
+    }
 }
 
 task downloadJdkforLinux(type: Download) {
