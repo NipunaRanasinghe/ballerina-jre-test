@@ -7,6 +7,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  setEnv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set version
+        run: echo "VERSION=$((grep -w 'version' | cut -d= -f2) < gradle.properties)" >> $GITHUB_ENV
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -20,8 +27,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Read module version
-        run: echo "VERSION=$((grep -w 'version' | cut -d= -f2) < gradle.properties)" >> $GITHUB_ENV
       - name: Build JRE on Linux
         if: matrix.os == 'ubuntu-latest'
         env:
