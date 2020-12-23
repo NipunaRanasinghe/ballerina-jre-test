@@ -20,6 +20,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Read module version
+        run: echo "VERSION=$((grep -w 'version' | cut -d= -f2) < gradle.properties)" >> $GITHUB_ENV
       - name: Build JRE on Linux
         if: matrix.os == 'ubuntu-latest'
         env:
@@ -42,17 +44,17 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: Linux Artifacts
+          name: ballerina-jre-linux-${VERSION}.zip
           path: build/distributions/ballerina-jre-linux-*.zip
       - name: Archive Windows Artifacts
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: Windows Artifacts
+          name: ballerina-jre-windows-${VERSION}.zip
           path: build/distributions/ballerina-jre-windows-*.zip
       - name: Archive MacOS Artifacts
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: MacOS Artifacts
+          name: ballerina-jre-macos-${VERSION}.zip
           path: build/distributions/ballerina-jre-macos-*.zip
