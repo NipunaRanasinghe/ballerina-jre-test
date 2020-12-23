@@ -79,7 +79,7 @@ task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
     workingDir "$buildDir/temp/extracted/jdk-macOS/jdk-${project.jdkVersion}/bin"
-    commandLine 'jlink', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-mac'
+    commandLine 'jlink', '--add-modules', jdkModules, '--output', '../../../../generated/ballerina-jre-macOS'
 }
 
 task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
