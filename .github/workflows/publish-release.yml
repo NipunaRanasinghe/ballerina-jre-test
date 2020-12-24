@@ -4,12 +4,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-release:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+  release_assets:
+    name: Release assets
+    needs: create_release
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -17,52 +35,51 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Set env-variable for release version
-        run: echo "VERSION=$((grep -w 'version' | cut -d= -f2) < gradle.properties | cut -d- -f1)" >> $GITHUB_ENV
-      - name: Checkout to release branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        run: |
-          echo "Version: ${VERSION}"
-          git config user.name ${{ secrets.USERNAME }}
-          git config user.email nipunaranasinghe93@gmail.com
-          git checkout -b release-${VERSION}
-      - name: Grant execute permission for gradlew
-        run: git update-index --chmod=+x gradlew
-      - name: Publish linux artifacts
+      - name: Build JRE on Linux
         if: matrix.os == 'ubuntu-latest'
         env:
-          GITHUB_TOKEN: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
           packageUser: ${{ secrets.USERNAME }}
           packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
-        run: |
-          ./gradlew release -Prelease.useAutomaticVersion=true
-          ./gradlew -Pversion=${VERSION} publish
-      - name: Publish windows artifacts
+        run: ./gradlew build
+      - name: Build JRE on Windows
         if: matrix.os == 'windows-latest'
         env:
-          GITHUB_TOKEN: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
           packageUser: ${{ secrets.USERNAME }}
           packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
-        run: |
-          ./gradlew.bat release -Prelease.useAutomaticVersion=true
-          ./gradlew.bat -Pversion=${VERSION} publish
-      - name: Publish macOS artifacts
+        run: ./gradlew.bat build
+      - name: Build JRE on macOS
         if: matrix.os == 'macOS-latest'
         env:
-          GITHUB_TOKEN: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
           packageUser: ${{ secrets.USERNAME }}
           packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
-        run: |
-          ./gradlew release -Prelease.useAutomaticVersion=true
-          ./gradlew -Pversion=${VERSION} publish
-      - name: Create Github release from the release tag
-        run: |
-          curl --request POST 'https://api.github.com/repos/NipunaRanasinghe/ballerina-jre-test/releases' \
-          --header 'Accept: application/vnd.github.v3+json' \
-          --header 'Authorization: Bearer ${{ secrets.JRE_ARTIFACTS_TOKEN }}' \
-          --header 'Content-Type: application/json' \
-          --data-raw '{
-          "tag_name": "v'"$VERSION"'",
-          "name": "ballerina-jre-test-v'"$VERSION"'"
-          }'
+        run: ./gradlew build
+      - name: Upload linux artifacts
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_name: ballerina-jre-linux.zip
+          asset_path: buildDir/distributions/
+          asset_content_type: application/octet-stream
+      - name: Upload windows artifacts
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          aasset_name: ballerina-jre-windows.zip
+          asset_path: buildDir/distributions/
+          asset_content_type: application/octet-stream
+      - name: Upload windows artifacts
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_name: ballerina-jre-macos.zip
+          asset_path: buildDir/distributions/
+          asset_content_type: application/octet-stream
