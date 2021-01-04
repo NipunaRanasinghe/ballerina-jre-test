@@ -61,7 +61,7 @@ jobs:
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_name: ballerina-jre-linux-0.7.24-SNAPSHOT.zip
-          asset_path: build/distributions/
+          asset_path: build/distributions/ballerina-jre-linux-*.zip
           asset_content_type: application/octet-stream
       - name: Upload windows artifacts
         if: matrix.os == 'windows-latest'
@@ -71,7 +71,7 @@ jobs:
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           aasset_name: ballerina-jre-windows-0.7.24-SNAPSHOT.zip
-          asset_path: build/distributions/
+          asset_path: build/distributions/ballerina-jre-windows-*.zip
           asset_content_type: application/octet-stream
       - name: Upload macOS artifacts
         if: matrix.os == 'macOS-latest'
@@ -81,5 +81,5 @@ jobs:
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_name: ballerina-jre-macos-0.7.24-SNAPSHOT.zip
-          asset_path: build/distributions/
+          asset_path: build/distributions/ballerina-jre-macos-*.zip
           asset_content_type: application/octet-stream
