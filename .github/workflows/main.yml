@@ -19,6 +19,7 @@ jobs:
     outputs:
       version: ${{steps.execute.outputs.version}}
   build:
+    needs: get_release_version
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
