@@ -7,15 +7,17 @@ on:
   workflow_dispatch:
 jobs:
   get_release_version:
-    name: Create Release
+    name: Get Release Version
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - id: checkout
         uses: actions/checkout@v2
-      - name: Set version
-        run: export VERSION="$(grep -w 'version' < gradle.properties)"
+      - id: execute
+        run: |
+          export VERSION="$(grep -w 'version' < gradle.properties)"
+          echo "::set-output name=version::${VERSION}"
     outputs:
-      version: ${{VERSION}}
+      version: ${{steps.execute.outputs.version}}
   build:
     runs-on: ${{ matrix.os }}
     strategy:

@@ -5,15 +5,17 @@ env:
   VERSION: 0.0.1
 jobs:
   get_release_version:
-    name: Create Release
+    name: Get Release Version
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - id: checkout
         uses: actions/checkout@v2
-      - name: Set version
-        run: export VERSION="$((grep -w 'version' | cut -d= -f2) < gradle.properties)"
+      - id: execute
+        run: |
+          export VERSION="$(grep -w 'version' < gradle.properties)"
+          echo "::set-output name=version::${VERSION}"
     outputs:
-      version: ${{VERSION}}
+      version: ${{steps.execute.outputs.version}}
   create_release:
     needs: get_release_version
     name: Create Release
