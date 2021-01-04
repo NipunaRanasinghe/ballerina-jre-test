@@ -55,18 +55,18 @@ jobs:
         with:
           # Todo - Include version once job-level environment variable support is fixed.
           name: ballerina-jre-linux-${{ needs.get_release_version.outputs.version }}.zip
-          path: build/distributions/ballerina-jre-linux.zip
+          path: build/distributions/ballerina-jre-linux-${{ needs.get_release_version.outputs.version }}.zip
       - name: Archive Windows Artifacts
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v2
         with:
           # Todo - Include version once job-level environment variable support is fixed.
           name: ballerina-jre-windows-${{ needs.get_release_version.outputs.version }}.zip
-          path: build/distributions/ballerina-jre-windows.zip
+          path: build/distributions/ballerina-jre-windows-${{ needs.get_release_version.outputs.version }}.zip
       - name: Archive MacOS Artifacts
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
         with:
           # Todo - Include version once job-level environment variable support is fixed.
           name: ballerina-jre-macos-${{ needs.get_release_version.outputs.version }}.zip
-          path: build/distributions/ballerina-jre-macos.zip
+          path: build/distributions/ballerina-jre-macos-${{ needs.get_release_version.outputs.version }}.zip
