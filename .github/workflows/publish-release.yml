@@ -10,14 +10,18 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set version
+        run: echo "VERSION=$((grep -w 'version' | cut -d= -f2) < gradle.properties)" >> $GITHUB_ENV
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ VERSION }}
+          release_name: ${{ VERSION }}
           draft: false
           prerelease: false
   release_assets:
@@ -60,8 +64,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-linux-0.7.24-SNAPSHOT.zip
-          asset_path: build/distributions/ballerina-jre-linux-0.7.24-SNAPSHOT.zip
+          asset_name: ballerina-jre-linux-${{ VERSION }}-SNAPSHOT.zip
+          asset_path: build/distributions/ballerina-jre-linux-SNAPSHOT.zip
           asset_content_type: application/octet-stream
       - name: Upload windows artifacts
         if: matrix.os == 'windows-latest'
@@ -70,8 +74,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-windows-0.7.24-SNAPSHOT.zip
-          asset_path: build/distributions/ballerina-jre-windows-0.7.24-SNAPSHOT.zip
+          asset_name: ballerina-jre-windows-${{ VERSION }}-SNAPSHOT.zip
+          asset_path: build/distributions/ballerina-jre-windows-SNAPSHOT.zip
           asset_content_type: application/octet-stream
       - name: Upload macOS artifacts
         if: matrix.os == 'macOS-latest'
@@ -80,6 +84,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-macos-0.7.24-SNAPSHOT.zip
-          asset_path: build/distributions/ballerina-jre-macos-0.7.24-SNAPSHOT.zip
+          asset_name: ballerina-jre-macos-${{ VERSION }}-SNAPSHOT.zip
+          asset_path: build/distributions/ballerina-jre-macos-SNAPSHOT.zip
           asset_content_type: application/octet-stream
