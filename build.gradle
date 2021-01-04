@@ -142,11 +142,11 @@ release {
     }
 }
 
-task deleteGenertedFiles(type: Delete) {
+task cleanGeneratedFiles(type: Delete) {
     delete "$buildDir/temp/generated/"
 }
 
-task deleteTemporaryFiles(type: Delete) {
+task cleanTemporaryFiles(type: Delete) {
     delete "$buildDir/temp/"
 }
 
@@ -154,6 +154,6 @@ assembleJreForLinux.dependsOn getModuleList
 assembleJreForWindows.dependsOn getModuleList
 assembleJreForMac.dependsOn getModuleList
 
-assembleJreForLinux.dependsOn deleteGenertedFiles
-assembleJreForWindows.dependsOn deleteGenertedFiles
-assembleJreForMac.dependsOn deleteGenertedFiles
+assembleJreForLinux.dependsOn cleanGeneratedFiles
+assembleJreForWindows.dependsOn cleanGeneratedFiles
+assembleJreForMac.dependsOn cleanGeneratedFiles

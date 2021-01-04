@@ -60,7 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-linux0.7.24-SNAPSHOT.zip
+          asset_name: ballerina-jre-linux-0.7.24-SNAPSHOT.zip
           asset_path: build/distributions/
           asset_content_type: application/octet-stream
       - name: Upload windows artifacts
@@ -70,7 +70,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          aasset_name: ballerina-jre-windows0.7.24-SNAPSHOT.zip
+          aasset_name: ballerina-jre-windows-0.7.24-SNAPSHOT.zip
           asset_path: build/distributions/
           asset_content_type: application/octet-stream
       - name: Upload macOS artifacts
