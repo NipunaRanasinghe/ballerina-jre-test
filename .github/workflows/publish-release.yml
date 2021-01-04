@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set version
-        run: echo "VERSION=$((grep -w 'version' | cut -d= -f2) < gradle.properties)" >> $GITHUB_ENV
+        run: export VERSION="$((grep -w 'version' | cut -d= -f2) < gradle.properties)"
     outputs:
       version: ${{VERSION}}
   create_release:
