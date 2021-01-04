@@ -1,8 +1,8 @@
 name: Publish release
-
 on:
   workflow_dispatch:
-
+env:
+  VERSION: 0.0.1
 jobs:
   create_release:
     name: Create Release
