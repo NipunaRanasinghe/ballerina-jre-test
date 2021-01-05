@@ -8,7 +8,7 @@ on:
 
 jobs:
   get_version:
-    name: Get Release Version
+    name: Populate Version
     runs-on: ubuntu-latest
     steps:
       - id: checkout
